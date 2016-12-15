@@ -18,7 +18,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="var" path="M2_REPO/junit/junit/3.8.1/junit-3.8.1.jar" sourcepath="M2_REPO/junit/junit/3.8.1/junit-3.8.1-sources.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/elasticsearch/elasticsearch/2.3.4/elasticsearch-2.3.4.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/elasticsearch/elasticsearch/2.3.4/elasticsearch-2.3.4.jar" sourcepath="/home/lvydra/.m2/repository/org/elasticsearch/elasticsearch/2.3.4/elasticsearch-2.3.4-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/apache/lucene/lucene-core/5.5.0/lucene-core-5.5.0.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/apache/lucene/lucene-backward-codecs/5.5.0/lucene-backward-codecs-5.5.0.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/apache/lucene/lucene-analyzers-common/5.5.0/lucene-analyzers-common-5.5.0.jar"/>

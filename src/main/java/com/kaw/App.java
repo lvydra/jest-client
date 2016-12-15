@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+
 import io.searchbox.client.JestClient;
 import io.searchbox.client.JestClientFactory;
 import io.searchbox.client.JestResult;
@@ -45,7 +48,8 @@ public class App {
             	
             	Thread.sleep(2000);
             	
-            	JestResult result = bscOps.readData(INDEX_NAME, TYPE_NAME, "record", "test");
+            	QueryBuilder query = QueryBuilders.termQuery("record", "test");
+            	JestResult result = bscOps.queryData(INDEX_NAME, TYPE_NAME, query);
             	
             	List<RecordDTO> records = result.getSourceAsObjectList(RecordDTO.class);
                 for (RecordDTO record : records) {

@@ -3,7 +3,7 @@ package com.kaw;
 import java.util.List;
 
 import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 
 import io.searchbox.client.JestClient;
@@ -40,9 +40,9 @@ public class BasicOperations {
         return result;
     }
 	
-    public JestResult readData(String indexName, String typeName, String name, String value) throws Exception {
+    public JestResult queryData(String indexName, String typeName, QueryBuilder query) throws Exception {
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-        searchSourceBuilder.query(QueryBuilders.termQuery(name, value));
+        searchSourceBuilder.query(query);
 
         Search search = new Search.Builder(searchSourceBuilder.toString()).addIndex(indexName).addType(typeName).build();
         System.out.println(searchSourceBuilder.toString());
