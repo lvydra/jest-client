@@ -6,9 +6,9 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class RecordDTO implements Serializable {
-	private static final long serialVersionUID = 797891176701190412L;
+    private static final long serialVersionUID = 797891176701190412L;
 
-	@JestId
+    @JestId
     private String id;
 
     private String record;

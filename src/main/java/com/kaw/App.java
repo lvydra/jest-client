@@ -10,13 +10,13 @@ import io.searchbox.client.JestResult;
 import io.searchbox.client.config.HttpClientConfig;
 
 public class App {
-	static BasicOperations basOp;
+    static BasicOperations basOp;
 	
-	private static final String TYPE_NAME = "records";
+    private static final String TYPE_NAME = "records";
     private static final String INDEX_NAME = "record";
 	
-	public static void main(String args[]) throws IOException{
-		try {
+    public static void main(String args[]) throws IOException{
+        try {
             HttpClientConfig clientConfig = new HttpClientConfig.Builder("http://localhost:9200").multiThreaded(true).build();
 			
             JestClientFactory factory = new JestClientFactory();
