@@ -32,7 +32,7 @@ public class RecordDTO implements Serializable {
         return record;
     }
 
-    public void setNote(String record) {
+    public void setRecord(String record) {
         this.record = record;
     }
 
