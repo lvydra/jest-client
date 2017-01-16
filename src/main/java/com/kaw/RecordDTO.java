@@ -1,52 +1,52 @@
 package com.kaw;
 
-import io.searchbox.annotations.JestId;
-
 import java.io.Serializable;
 import java.util.Date;
 
+import io.searchbox.annotations.JestId;
+
 public class RecordDTO implements Serializable {
-    private static final long serialVersionUID = 797891176701190412L;
 
-    @JestId
-    private String id;
+	private static final long serialVersionUID = 797891176701190412L;
 
-    private String record;
+	@JestId
+	private String id;
 
-    private Date createdOn;
+	private String record;
 
-    public RecordDTO(String record) {
-        this.record = record;
-        this.createdOn = new Date();
-    }
+	private Date createdOn;
 
-    public String getId() {
-        return id;
-    }
+	public RecordDTO(String record) {
+		this.record = record;
+		this.createdOn = new Date();
+	}
 
-    public void setId(String id) {
-        this.id = id;
-    }
+	public String getId() {
+		return id;
+	}
 
-    public String getRecord() {
-        return record;
-    }
+	public void setId(String id) {
+		this.id = id;
+	}
 
-    public void setRecord(String record) {
-        this.record = record;
-    }
+	public String getRecord() {
+		return record;
+	}
 
-    public Date getCreatedOn() {
-        return createdOn;
-    }
+	public void setRecord(String record) {
+		this.record = record;
+	}
 
-    public void setCreatedOn(Date createdOn) {
-        this.createdOn = createdOn;
-    }
+	public Date getCreatedOn() {
+		return createdOn;
+	}
 
-    @Override
-    public String toString() {
-        return "Record [id=" + id + ", record=" + record + ", createdOn=" + createdOn + "]";
-    }
+	public void setCreatedOn(Date createdOn) {
+		this.createdOn = createdOn;
+	}
 
+	@Override
+	public String toString() {
+		return "Record [id=" + id + ", record=" + record + ", createdOn=" + createdOn + "]";
+	}
 }
