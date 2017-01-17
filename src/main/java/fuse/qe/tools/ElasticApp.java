@@ -1,4 +1,4 @@
-package com.kaw;
+package fuse.qe.tools;
 
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -10,17 +10,18 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import fuse.qe.tools.model.TestExceptionDTO;
 import io.searchbox.client.JestClient;
 import io.searchbox.client.JestClientFactory;
 import io.searchbox.client.JestResult;
 import io.searchbox.client.config.HttpClientConfig;
 
-public final class App {
+public final class ElasticApp {
 
 	private static final String TYPE_NAME = "error";
 	private static final String INDEX_NAME = "error_db";
 
-	private App() {
+	private ElasticApp() {
 	}
 
 	public static void main(String[] args) throws IOException {
@@ -33,8 +34,8 @@ public final class App {
 
 			final BasicOperations bscOps = new BasicOperations(jestClient);
 
-			final RecordDTO record1 = new RecordDTO("Record 1 - test 1");
-			final RecordDTO record2 = new RecordDTO("Record 2 - test 2");
+			final TestExceptionDTO record1 = new TestExceptionDTO("Record 1 - test 1");
+			final TestExceptionDTO record2 = new TestExceptionDTO("Record 2 - test 2");
 
 			final List<Object> sources = readRecordsFromCsv("error_stack_tace.csv");
 
@@ -51,15 +52,15 @@ public final class App {
 
 				Thread.sleep(2000);
 
-				final RecordDTO randomRec = (RecordDTO) sources.get(120);
+				final TestExceptionDTO randomRec = (TestExceptionDTO) sources.get(120);
 
-				final QueryBuilder query = QueryBuilders.matchPhraseQuery("record", randomRec.getRecord());
+				final QueryBuilder query = QueryBuilders.matchPhraseQuery("record", randomRec.getError_stack_trace());
 
 				final JestResult result = bscOps.queryData(INDEX_NAME, TYPE_NAME, query);
 
-				final List<RecordDTO> records = result.getSourceAsObjectList(RecordDTO.class);
+				final List<TestExceptionDTO> records = result.getSourceAsObjectList(TestExceptionDTO.class);
 
-				for (RecordDTO record : records) {
+				for (TestExceptionDTO record : records) {
 					System.out.println(record);
 				}
 			} finally {
@@ -82,7 +83,7 @@ public final class App {
 			String[] line;
 			line = reader.readNext();
 			while ((line = reader.readNext()) != null) {
-				final RecordDTO record = new RecordDTO(line[1]);
+				final TestExceptionDTO record = new TestExceptionDTO(line[1]);
 				sources.add(record);
 			}
 		} catch (IOException e) {
