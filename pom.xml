@@ -1,11 +1,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.kaw</groupId>
-	<artifactId>elasticsearch-example</artifactId>
+
+	<groupId>fuse.qe.tool</groupId>
+	<artifactId>elastic-client</artifactId>
+
 	<packaging>jar</packaging>
-	<version>1.0-SNAPSHOT</version>
-	<name>elasticsearch-example</name>
+	<version>1.0</version>
+	<name>elastic-client</name>
 	<url>http://maven.apache.org</url>
 
 	<dependencies>
@@ -35,4 +38,47 @@
 		</dependency>
 	</dependencies>
 
+	<distributionManagement>
+		<repository>
+			<id>fuse-qe-repo</id>
+			<name>Fuse QE Repository</name>
+			<url>http://fusewin.tpb.lab.eng.brq.redhat.com:8081/nexus/content/repositories/fuse-qe-repo/</url>
+			<layout>default</layout>
+		</repository>
+		<snapshotRepository>
+			<id>fuse-qe-snapshots</id>
+			<name>Fuse QE Snapshots Repository</name>
+			<url>http://fusewin.tpb.lab.eng.brq.redhat.com:8081/nexus/content/repositories/fuse-qe-snapshots/</url>
+			<layout>default</layout>
+		</snapshotRepository>
+	</distributionManagement>
+
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<finalName>elastic-client</finalName>
+					<!--<archive>-->
+					<!--<manifest>-->
+					<!--<mainClass>fuse.qe.tools.ParserMain</mainClass>-->
+					<!--</manifest>-->
+					<!--</archive>-->
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+					<appendAssemblyId>false</appendAssemblyId>
+				</configuration>
+				<executions>
+					<execution>
+						<id>elastic-client</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal> <!-- that's all :) -->
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 </project>
