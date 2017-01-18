@@ -23,8 +23,6 @@ public abstract class ElasticClientUtils {
 
 	private static final String INDEX_NAME = "error_db";
 
-
-
 	//0.
 	// This method will set connection of ES client to ES server.
 	public static void setConnection(String url, String user, String pwd) {
@@ -38,7 +36,6 @@ public abstract class ElasticClientUtils {
 		bscOps = new BasicOperations(jestClient);
 	}
 
-
 	//1.
 	// this method will update ES database with new exception DTO.
 	public static void updateElasticDB(TestExceptionDTO excdto) {
@@ -50,7 +47,7 @@ public abstract class ElasticClientUtils {
 
 	}
 
-//	2.
+	//	2.
 //	 Returns group id of that exception, via following algorithm:
 //	if the difference from the known exception (with group_id already specified)
 //	is < than e.g. 30 words, it is the same group_id, id there is no such exception (new exception case)
@@ -60,4 +57,19 @@ public abstract class ElasticClientUtils {
 		return -1;
 	}
 
+	/*
+		3.
+	 */
+
+//	returns
+	public static Boolean deepCheckAndRepair(TestExceptionDTO excdto) {
+
+		return true;
+	}
+
+	//4.
+	public static Boolean shallowCheckAndRepair(TestExceptionDTO excdto) {
+
+		return true;
+	}
 }
