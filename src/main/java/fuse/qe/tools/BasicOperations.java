@@ -52,7 +52,7 @@ public class BasicOperations {
 
 		return result;
 	}
-	
+
 	public JestResult queryData(String indexName, String typeName, String query) throws IOException {
 		Search search = new Search.Builder(query).addIndex(indexName).addType(typeName).build();
 		System.out.println(query);
