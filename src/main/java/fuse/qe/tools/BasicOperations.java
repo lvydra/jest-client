@@ -1,4 +1,4 @@
-package com.kaw;
+package fuse.qe.tools;
 
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -99,4 +99,9 @@ public class BasicOperations {
 	public void setClient(JestClient jestClient) {
 		this.jestClient = jestClient;
 	}
+
+
+
 }
+
+//ElastiSearch.updateElasticDB(excdto);
