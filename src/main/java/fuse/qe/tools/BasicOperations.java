@@ -4,6 +4,7 @@ import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 
+import java.io.IOException;
 import java.util.List;
 
 import io.searchbox.client.JestClient;
@@ -49,6 +50,15 @@ public class BasicOperations {
 		final JestResult result = jestClient.execute(search);
 		System.out.println(result.getJsonString());
 
+		return result;
+	}
+
+	public JestResult queryData(String indexName, String typeName, String query) throws IOException {
+		Search search = new Search.Builder(query).addIndex(indexName).addType(typeName).build();
+		System.out.println(query);
+		JestResult result = jestClient.execute(search);
+		System.out.println(result.getJsonString());
+		
 		return result;
 	}
 
