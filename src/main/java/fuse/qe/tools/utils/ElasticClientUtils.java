@@ -176,5 +176,16 @@ public class ElasticClientUtils {
 		this.bscOps = bscOps;
 	}
 	
+	//3.
+	public static Boolean deepCheckAndRepair(TestExceptionDTO excdto) {
+		
+		return true;
+	}
 	
+	//4.
+	public static Boolean shallowCheckAndRepair(TestExceptionDTO excdto) {
+		
+		return true;
+	}
+
 }
