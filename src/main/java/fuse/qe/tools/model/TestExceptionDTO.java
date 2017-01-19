@@ -21,9 +21,17 @@ public class TestExceptionDTO implements Serializable {
 	public TestExceptionDTO() {
 		this.createdOn = new Date();
 	}
-
-	public TestExceptionDTO(String est) {
+	
+	public TestExceptionDTO(String id, String est) {
+		this.id = id;
 		this.error_stack_trace = est;
+		this.createdOn = new Date();
+	}
+
+	public TestExceptionDTO(String id, String est, String gId) {
+		this.id = id;
+		this.error_stack_trace = est;
+		this.group_id = gId;
 		this.createdOn = new Date();
 	}
 
