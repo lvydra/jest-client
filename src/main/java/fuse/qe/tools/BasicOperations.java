@@ -91,7 +91,7 @@ public class BasicOperations {
 
 		return result;
 	}
-
+	
 	public JestClient getClient() {
 		return jestClient;
 	}
@@ -100,8 +100,4 @@ public class BasicOperations {
 		this.jestClient = jestClient;
 	}
 
-
-
 }
-
-//ElastiSearch.updateElasticDB(excdto);

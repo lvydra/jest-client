@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fuse.qe.tools.model.TestExceptionDTO;
+import fuse.qe.tools.utils.ElasticClientUtils;
 import io.searchbox.client.JestClient;
 import io.searchbox.client.JestClientFactory;
 import io.searchbox.client.JestResult;
@@ -26,46 +27,18 @@ public final class ElasticApp {
 
 	public static void main(String[] args) throws IOException {
 		try {
-			final HttpClientConfig clientConfig = new HttpClientConfig.Builder("http://localhost:9200").multiThreaded(true).build();
+			List<Object> sources = readRecordsFromCsv("/home/lvydra/Stažené/error_stack_tace.csv");
+			
+			TestExceptionDTO randomRec = (TestExceptionDTO) sources.get(520);
+			
+			ElasticClientUtils elasticClientUtils = new ElasticClientUtils("http://localhost:9200");
 
-			final JestClientFactory factory = new JestClientFactory();
-			factory.setHttpClientConfig(clientConfig);
-			final JestClient jestClient = factory.getObject();
-
-			final BasicOperations bscOps = new BasicOperations(jestClient);
-
-			final TestExceptionDTO record1 = new TestExceptionDTO("Record 1 - test 1");
-			final TestExceptionDTO record2 = new TestExceptionDTO("Record 2 - test 2");
-
-			final List<Object> sources = readRecordsFromCsv("error_stack_tace.csv");
-
-			try {
-				bscOps.deleteIndex(INDEX_NAME);
-
-				bscOps.createIndex(INDEX_NAME);
-
-				bscOps.indexData(INDEX_NAME, TYPE_NAME, record1);
-
-				bscOps.indexDataAsync(INDEX_NAME, TYPE_NAME, record2);
-
-				bscOps.indexDataBulk(INDEX_NAME, TYPE_NAME, sources);
-
-				Thread.sleep(2000);
-
-				final TestExceptionDTO randomRec = (TestExceptionDTO) sources.get(120);
-
-				final QueryBuilder query = QueryBuilders.matchPhraseQuery("record", randomRec.getError_stack_trace());
-
-				final JestResult result = bscOps.queryData(INDEX_NAME, TYPE_NAME, query);
-
-				final List<TestExceptionDTO> records = result.getSourceAsObjectList(TestExceptionDTO.class);
-
-				for (TestExceptionDTO record : records) {
-					System.out.println(record);
-				}
-			} finally {
-				jestClient.shutdownClient();
-			}
+			elasticClientUtils.deleteIndex();
+			elasticClientUtils.indexData(sources);
+			
+			Integer groupId = elasticClientUtils.findGroupId(randomRec, 30);
+			
+			//elasticClientUtils.updateElasticDB(randomRec);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -83,7 +56,7 @@ public final class ElasticApp {
 			String[] line;
 			line = reader.readNext();
 			while ((line = reader.readNext()) != null) {
-				final TestExceptionDTO record = new TestExceptionDTO(line[1]);
+				final TestExceptionDTO record = new TestExceptionDTO(line[0], line[1], line[2]);
 				sources.add(record);
 			}
 		} catch (IOException e) {
