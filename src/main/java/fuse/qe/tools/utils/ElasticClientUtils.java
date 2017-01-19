@@ -83,8 +83,8 @@ public class ElasticClientUtils {
 	}
 
 	/**
-    * Returns group id of that exception, via following algorithm:
-    * if the difference from the known exception (with group_id already specified)
+	* Returns group id of that exception, via following algorithm:
+	* if the difference from the known exception (with group_id already specified)
 	* is < than e.g. 30 words, it is the same group_id, id there is no such exception (new exception case)
 	* it returns -1
 	* 
@@ -138,7 +138,7 @@ public class ElasticClientUtils {
 		}
 		 
 		return sources;
-    }
+	}
 	
 	public JestClientFactory getFactory() {
 		return factory;

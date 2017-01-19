@@ -59,16 +59,16 @@ public class TestExceptionDTO implements Serializable {
 		this.createdOn = createdOn;
 	}
 
-	@Override
-	public String toString() {
-		return "Record [id=" + id + ", error_stack_trace=" + error_stack_trace + ", createdOn=" + createdOn + "]";
-	}
-
 	public String getGroup_id() {
 		return group_id;
 	}
 
 	public void setGroup_id(String gid) {
 		this.group_id = gid;
+	}
+	
+	@Override
+	public String toString() {
+		return "Record [id=" + id + ", error_stack_trace=" + error_stack_trace + ", createdOn=" + createdOn + "]";
 	}
 }
