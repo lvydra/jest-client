@@ -31,7 +31,7 @@ public final class ElasticApp {
 			
 			TestExceptionDTO randomRec = (TestExceptionDTO) sources.get(600);
 			
-			ElasticClientUtils elasticClientUtils = new ElasticClientUtils("http://localhost:9200", "error_db", "error");
+			ElasticClientUtils elasticClientUtils = new ElasticClientUtils("http://localhost:9200", "error_db");
 
 			//elasticClientUtils.deleteIndex();
 			//elasticClientUtils.indexData(sources);

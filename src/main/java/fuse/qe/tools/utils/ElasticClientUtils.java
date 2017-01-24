@@ -34,21 +34,20 @@ public class ElasticClientUtils {
 
 	private BasicOperations bscOps;
 
-	private String typeName;
-
 	private String indexName;
+
+	private static final String TYPE_NAME = "error";
 	
 	private static final String NAME = "error_stack_trace";
 	
 	private static final String GROUP_ID = "group_id";
 	
-	public ElasticClientUtils(String url, int port, String user, String pwd, String indexName, String typeName) {
+	public ElasticClientUtils(String url, int port, String user, String pwd, String indexName) {
 		this.indexName = indexName;
-		this.typeName = typeName;
 		
 		BasicCredentialsProvider customCredentialsProvider = new BasicCredentialsProvider();
 		customCredentialsProvider.setCredentials(
-		        new AuthScope(url, port),
+				new AuthScope(url, port),
 		        new UsernamePasswordCredentials(user, pwd)
 		);
 		
@@ -64,9 +63,8 @@ public class ElasticClientUtils {
 		bscOps = new BasicOperations(jestClient);
 	}
 	
-	public ElasticClientUtils(String url, String indexName, String typeName) {
+	public ElasticClientUtils(String url, String indexName) {
 		this.indexName = indexName;
-		this.typeName = typeName;
 		
 		clientConfig = new HttpClientConfig.Builder(url)
 				.multiThreaded(true)
@@ -87,7 +85,7 @@ public class ElasticClientUtils {
 	 * @throws Exception 
 	 **/
 	public void updateElasticDB(TestExceptionDTO excdto) throws Exception {
-		bscOps.indexData(indexName, typeName, excdto);
+		bscOps.indexData(indexName, TYPE_NAME, excdto);
 	}
 
 	/**
@@ -103,7 +101,7 @@ public class ElasticClientUtils {
 	public Integer findGroupId(TestExceptionDTO excdto, int difference, String minimumShouldMatch) throws Exception {
 		QueryBuilder query = QueryBuilders.matchQuery(NAME, excdto.getError_stack_trace()).slop(difference).minimumShouldMatch(minimumShouldMatch);
     	
-		JestResult result = bscOps.queryData(indexName, typeName, query, 100);
+		JestResult result = bscOps.queryData(indexName, TYPE_NAME, query, 100);
 		
 		List<TestExceptionDTO> exceptions = result.getSourceAsObjectList(TestExceptionDTO.class);
 		
@@ -116,13 +114,13 @@ public class ElasticClientUtils {
 	}
 	
 	public void indexData(List<Object> sources) throws Exception {
-		bscOps.indexDataBulk(indexName, typeName, sources);
+		bscOps.indexDataBulk(indexName, TYPE_NAME, sources);
 	}
 	
 	public void indexDataFromCsv(String path) throws Exception {
 		List<Object> sources = readExceptionsFromCsv(path);
 		
-		bscOps.indexDataBulk(indexName, typeName, sources);
+		bscOps.indexDataBulk(indexName, TYPE_NAME, sources);
 	}
 	
 	public List<Object> readExceptionsFromCsv(String path) {
@@ -149,7 +147,7 @@ public class ElasticClientUtils {
 	private void checkResults(String groupId, List<TestExceptionDTO> similarFounds) throws Exception {
 		QueryBuilder query = QueryBuilders.matchPhraseQuery(GROUP_ID, groupId);
 		
-		JestResult result = bscOps.queryData(indexName, typeName, query, 100);
+		JestResult result = bscOps.queryData(indexName, TYPE_NAME, query, 100);
 		
 		List<TestExceptionDTO> exceptions = result.getSourceAsObjectList(TestExceptionDTO.class);
 		
@@ -165,14 +163,6 @@ public class ElasticClientUtils {
 		System.out.println("All group ids matched.");
 	}
 	
-	public String getTypeName() {
-		return typeName;
-	}
-
-	public void setTypeName(String typeName) {
-		this.typeName = typeName;
-	}
-
 	public String getIndexName() {
 		return indexName;
 	}
