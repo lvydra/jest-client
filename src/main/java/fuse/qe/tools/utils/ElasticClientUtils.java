@@ -47,8 +47,8 @@ public class ElasticClientUtils {
 		
 		BasicCredentialsProvider customCredentialsProvider = new BasicCredentialsProvider();
 		customCredentialsProvider.setCredentials(
-				new AuthScope(url, port),
-		        new UsernamePasswordCredentials(user, pwd)
+			new AuthScope(url, port),
+			new UsernamePasswordCredentials(user, pwd)
 		);
 		
 		clientConfig = new HttpClientConfig.Builder(url)
