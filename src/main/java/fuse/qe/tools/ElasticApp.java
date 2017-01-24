@@ -29,14 +29,16 @@ public final class ElasticApp {
 		try {
 			List<Object> sources = readRecordsFromCsv("/home/lvydra/Stažené/error_stack_tace.csv");
 			
-			TestExceptionDTO randomRec = (TestExceptionDTO) sources.get(520);
+			TestExceptionDTO randomRec = (TestExceptionDTO) sources.get(600);
 			
-			ElasticClientUtils elasticClientUtils = new ElasticClientUtils("http://localhost:9200");
+			ElasticClientUtils elasticClientUtils = new ElasticClientUtils("http://localhost:9200", "error_db");
 
-			elasticClientUtils.deleteIndex();
-			elasticClientUtils.indexData(sources);
+			//elasticClientUtils.deleteIndex();
+			//elasticClientUtils.indexData(sources);
 			
-			Integer groupId = elasticClientUtils.findGroupId(randomRec, 30);
+			//Thread.sleep(2000);
+			
+			Integer groupId = elasticClientUtils.findGroupId(randomRec, 10, "98%");
 			
 			//elasticClientUtils.updateElasticDB(randomRec);
 		} catch (Exception e) {

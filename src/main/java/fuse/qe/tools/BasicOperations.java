@@ -41,11 +41,11 @@ public class BasicOperations {
 		return result;
 	}
 
-	public JestResult queryData(String indexName, String typeName, QueryBuilder query) throws Exception {
+	public JestResult queryData(String indexName, String typeName, QueryBuilder query, int size) throws Exception {
 		final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 		searchSourceBuilder.query(query);
 
-		final Search search = new Search.Builder(searchSourceBuilder.toString()).addIndex(indexName).addType(typeName).build();
+		final Search search = new Search.Builder(searchSourceBuilder.size(size).toString()).addIndex(indexName).addType(typeName).build();
 		System.out.println(searchSourceBuilder.toString());
 		final JestResult result = jestClient.execute(search);
 		System.out.println(result.getJsonString());
