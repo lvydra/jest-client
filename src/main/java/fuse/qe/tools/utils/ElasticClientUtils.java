@@ -99,7 +99,7 @@ public class ElasticClientUtils {
 	 * @return
 	 * @throws Exception
 	 */
-	public Integer findGroupId(TestExceptionDTO excdto, int difference, String minimumShouldMatch) throws Exception {
+	public Integer findGroupId(TestExceptionDTO excdto, Integer difference, String minimumShouldMatch) throws Exception {
 		QueryBuilder query = QueryBuilders.matchQuery(NAME, excdto.getError_stack_trace()).slop(difference).minimumShouldMatch(minimumShouldMatch);
     	
 		JestResult result = bscOps.queryData(indexName, TYPE_NAME, query, 100);
