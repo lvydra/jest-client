@@ -1,17 +1,18 @@
 package fuse.qe.tools.utils;
 
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.impl.client.BasicCredentialsProvider;
+
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 
 import com.opencsv.CSVReader;
+
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import fuse.qe.tools.BasicOperations;
 import fuse.qe.tools.model.TestExceptionDTO;
@@ -50,7 +51,7 @@ public class ElasticClientUtils {
 			new AuthScope(url, port),
 			new UsernamePasswordCredentials(user, pwd)
 		);
-		
+
 		clientConfig = new HttpClientConfig.Builder(url)
 				.credentialsProvider(customCredentialsProvider)
 				.multiThreaded(true)
@@ -79,11 +80,11 @@ public class ElasticClientUtils {
 
 	/**
 	 * This method will update ES database with new exception DTO.
-	 * 
+	 *
 	 * @param excdto
 	 * @return
-	 * @throws Exception 
-	 **/
+	 * @throws Exception
+	 */
 	public void updateElasticDB(TestExceptionDTO excdto) throws Exception {
 		bscOps.indexData(indexName, TYPE_NAME, excdto);
 	}
@@ -93,45 +94,45 @@ public class ElasticClientUtils {
 	 * if the difference from the known exception (with group_id already specified)
 	 * is < than e.g. 30 words, it is the same group_id, id there is no such exception (new exception case)
 	 * it returns -1
-	 * 
+	 *
 	 * @param excdto
 	 * @return
 	 * @throws Exception
-	 **/
+	 */
 	public Integer findGroupId(TestExceptionDTO excdto, int difference, String minimumShouldMatch) throws Exception {
 		QueryBuilder query = QueryBuilders.matchQuery(NAME, excdto.getError_stack_trace()).slop(difference).minimumShouldMatch(minimumShouldMatch);
     	
 		JestResult result = bscOps.queryData(indexName, TYPE_NAME, query, 100);
 		
 		List<TestExceptionDTO> exceptions = result.getSourceAsObjectList(TestExceptionDTO.class);
-		
+
 		if (exceptions.isEmpty()) {
 			return -1;
 		}
-		
+
 		TestExceptionDTO exception = exceptions.get(0);
 		String groupId = exception.getGroup_id();
-		
-		checkResults(groupId, exceptions);
+
+    checkResults(groupId, exceptions);
 		
 		return Integer.valueOf(groupId);
 	}
-	
+
 	public void indexData(List<Object> sources) throws Exception {
 		bscOps.indexDataBulk(indexName, TYPE_NAME, sources);
 	}
-	
+
 	public void indexDataFromCsv(String path) throws Exception {
 		List<Object> sources = readExceptionsFromCsv(path);
-		
+    
 		bscOps.indexDataBulk(indexName, TYPE_NAME, sources);
 	}
-	
+
 	public List<Object> readExceptionsFromCsv(String path) {
 		List<Object> sources = new ArrayList<Object>();
-		
+
 		String csvFile = path;
-		
+
 		CSVReader reader = null;
 		try {
 			reader = new CSVReader(new FileReader(csvFile));
@@ -144,11 +145,11 @@ public class ElasticClientUtils {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		 
+
 		return sources;
 	}
-	
-	private void checkResults(String groupId, List<TestExceptionDTO> similarFounds) throws Exception {
+
+  private void checkResults(String groupId, List<TestExceptionDTO> similarFounds) throws Exception {
 		QueryBuilder query = QueryBuilders.matchPhraseQuery(GROUP_ID, groupId);
 		
 		JestResult result = bscOps.queryData(indexName, TYPE_NAME, query, 100);
@@ -213,14 +214,13 @@ public class ElasticClientUtils {
 	
 	/** TODO 3. **/
 	public static Boolean deepCheckAndRepair(TestExceptionDTO excdto) {
-		
-		return true;
-	}
-	
-	/** TODO 4. **/
-	public static Boolean shallowCheckAndRepair(TestExceptionDTO excdto) {
-		
+
 		return true;
 	}
 
+	/** TODO 4. **/
+	public static Boolean shallowCheckAndRepair(TestExceptionDTO excdto) {
+
+		return true;
+	}
 }
