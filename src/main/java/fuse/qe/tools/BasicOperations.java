@@ -70,7 +70,7 @@ public class BasicOperations {
 		System.out.println(query);
 		JestResult result = jestClient.execute(search);
 		System.out.println(result.getJsonString());
-		
+
 		return result;
 	}
 
@@ -103,7 +103,7 @@ public class BasicOperations {
 
 		return result;
 	}
-	
+
 	public JestClient getClient() {
 		return jestClient;
 	}
@@ -111,5 +111,4 @@ public class BasicOperations {
 	public void setClient(JestClient jestClient) {
 		this.jestClient = jestClient;
 	}
-
 }
