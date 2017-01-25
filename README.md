@@ -1,1 +1,1 @@
-# jest-client-example
+# jest-client

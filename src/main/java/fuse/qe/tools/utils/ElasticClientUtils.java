@@ -42,7 +42,11 @@ public class ElasticClientUtils {
 
 	private static final String GROUP_ID = "group_id";
 
-	public ElasticClientUtils(String url, Integer port, String user, String pwd, String indexName) {
+	private static final String ID = "id";
+	
+	
+  public ElasticClientUtils(String url, Integer port, String user, String pwd, String indexName) {
+
 		this.indexName = indexName;
 
 		BasicCredentialsProvider customCredentialsProvider = new BasicCredentialsProvider();
@@ -166,6 +170,36 @@ public class ElasticClientUtils {
 		}
 		System.out.println("All group ids matched.");
 	}
+	
+	public Boolean checkAndRepair(TestExceptionDTO excdto) throws Exception {
+		QueryBuilder query = QueryBuilders.matchPhraseQuery(ID, excdto.getId());
+		  
+		JestResult result = bscOps.queryData(indexName, TYPE_NAME, query);
+		 
+		List<TestExceptionDTO> exceptions = result.getSourceAsObjectList(TestExceptionDTO.class);
+		
+		if (exceptions.isEmpty()) {
+			return false;
+		}
+		  
+		TestExceptionDTO exception = exceptions.get(0);
+		  
+		String groupId = exception.getGroup_id();
+		String excdtoGroupId = excdto.getGroup_id();
+		
+		if (!groupId.equals(excdtoGroupId)) {
+			return false;
+		}
+		  
+		String statckTrace = exception.getError_stack_trace();
+		String excdtoStackTrace = excdto.getError_stack_trace();
+		
+		if (!statckTrace.equals(excdtoStackTrace)) {
+			return false;
+		}
+		  
+		return true;
+	}
 
 	public String getIndexName() {
 		return indexName;
@@ -209,21 +243,5 @@ public class ElasticClientUtils {
 
 	public void setBscOps(BasicOperations bscOps) {
 		this.bscOps = bscOps;
-	}
-
-	/**
-	 * TODO 3.
-	 **/
-	public static Boolean deepCheckAndRepair(TestExceptionDTO excdto) {
-
-		return true;
-	}
-
-	/**
-	 * TODO 4.
-	 **/
-	public static Boolean shallowCheckAndRepair(TestExceptionDTO excdto) {
-
-		return true;
 	}
 }
