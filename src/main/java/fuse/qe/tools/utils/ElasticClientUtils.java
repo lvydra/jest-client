@@ -172,6 +172,8 @@ public class ElasticClientUtils {
 	}
 	
 	public Boolean checkAndRepair(TestExceptionDTO excdto) throws Exception {
+		Boolean repair = false;
+		
 		QueryBuilder query = QueryBuilders.matchPhraseQuery(ID, excdto.getId());
 		  
 		JestResult result = bscOps.queryData(indexName, TYPE_NAME, query);
@@ -179,23 +181,32 @@ public class ElasticClientUtils {
 		List<TestExceptionDTO> exceptions = result.getSourceAsObjectList(TestExceptionDTO.class);
 		
 		if (exceptions.isEmpty()) {
-			return false;
+			repair = true;
+		} else {
+			TestExceptionDTO exception = exceptions.get(0);
+			
+			String groupId = exception.getGroup_id();
+			String excdtoGroupId = excdto.getGroup_id();
+			
+			if (!groupId.equals(excdtoGroupId)) {
+				repair = true;
+			} else {
+				String statckTrace = exception.getError_stack_trace();
+				String excdtoStackTrace = excdto.getError_stack_trace();
+				
+				if (!statckTrace.equals(excdtoStackTrace)) {
+					repair = true;
+				}
+			}
 		}
-		  
-		TestExceptionDTO exception = exceptions.get(0);
-		  
-		String groupId = exception.getGroup_id();
-		String excdtoGroupId = excdto.getGroup_id();
-		
-		if (!groupId.equals(excdtoGroupId)) {
-			return false;
-		}
-		  
-		String statckTrace = exception.getError_stack_trace();
-		String excdtoStackTrace = excdto.getError_stack_trace();
-		
-		if (!statckTrace.equals(excdtoStackTrace)) {
-			return false;
+
+		if (repair) {
+			try {
+				updateElasticDB(excdto);
+				return true;
+			} catch (Exception e) {
+				return false;
+			}
 		}
 		  
 		return true;
