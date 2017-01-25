@@ -1,8 +1,5 @@
 package fuse.qe.tools;
 
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
-
 import com.opencsv.CSVReader;
 
 import java.io.FileReader;
@@ -12,10 +9,6 @@ import java.util.List;
 
 import fuse.qe.tools.model.TestExceptionDTO;
 import fuse.qe.tools.utils.ElasticClientUtils;
-import io.searchbox.client.JestClient;
-import io.searchbox.client.JestClientFactory;
-import io.searchbox.client.JestResult;
-import io.searchbox.client.config.HttpClientConfig;
 
 public final class ElasticApp {
 
@@ -28,18 +21,18 @@ public final class ElasticApp {
 	public static void main(String[] args) throws IOException {
 		try {
 			List<Object> sources = readRecordsFromCsv("/home/lvydra/Stažené/error_stack_tace.csv");
-			
+
 			TestExceptionDTO randomRec = (TestExceptionDTO) sources.get(600);
-			
+
 			ElasticClientUtils elasticClientUtils = new ElasticClientUtils("http://localhost:9200", "error_db");
 
 			//elasticClientUtils.deleteIndex();
 			//elasticClientUtils.indexData(sources);
-			
+
 			//Thread.sleep(2000);
-			
+
 			Integer groupId = elasticClientUtils.findGroupId(randomRec, 10, "98%");
-			
+
 			//elasticClientUtils.updateElasticDB(randomRec);
 		} catch (Exception e) {
 			e.printStackTrace();

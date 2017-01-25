@@ -26,7 +26,6 @@ import io.searchbox.client.config.HttpClientConfig;
  */
 public class ElasticClientUtils {
 
-
 	private JestClientFactory factory = new JestClientFactory();
 
 	private HttpClientConfig clientConfig;
@@ -38,18 +37,18 @@ public class ElasticClientUtils {
 	private String indexName;
 
 	private static final String TYPE_NAME = "error";
-	
+
 	private static final String NAME = "error_stack_trace";
-	
+
 	private static final String GROUP_ID = "group_id";
-	
-	public ElasticClientUtils(String url, int port, String user, String pwd, String indexName) {
+
+	public ElasticClientUtils(String url, Integer port, String user, String pwd, String indexName) {
 		this.indexName = indexName;
-		
+
 		BasicCredentialsProvider customCredentialsProvider = new BasicCredentialsProvider();
 		customCredentialsProvider.setCredentials(
-			new AuthScope(url, port),
-			new UsernamePasswordCredentials(user, pwd)
+				new AuthScope(url, port),
+				new UsernamePasswordCredentials(user, pwd)
 		);
 
 		clientConfig = new HttpClientConfig.Builder(url)
@@ -63,11 +62,11 @@ public class ElasticClientUtils {
 
 		bscOps = new BasicOperations(jestClient);
 	}
-	
-	public ElasticClientUtils(String url, String indexName) {
+
+	public ElasticClientUtils(String urlWithPort, String indexName) {
 		this.indexName = indexName;
-		
-		clientConfig = new HttpClientConfig.Builder(url)
+
+		clientConfig = new HttpClientConfig.Builder(urlWithPort)
 				.multiThreaded(true)
 				.build();
 
@@ -101,9 +100,9 @@ public class ElasticClientUtils {
 	 */
 	public Integer findGroupId(TestExceptionDTO excdto, Integer difference, String minimumShouldMatch) throws Exception {
 		QueryBuilder query = QueryBuilders.matchQuery(NAME, excdto.getError_stack_trace()).slop(difference).minimumShouldMatch(minimumShouldMatch);
-    	
+
 		JestResult result = bscOps.queryData(indexName, TYPE_NAME, query, 100);
-		
+
 		List<TestExceptionDTO> exceptions = result.getSourceAsObjectList(TestExceptionDTO.class);
 
 		if (exceptions.isEmpty()) {
@@ -113,8 +112,8 @@ public class ElasticClientUtils {
 		TestExceptionDTO exception = exceptions.get(0);
 		String groupId = exception.getGroup_id();
 
-    checkResults(groupId, exceptions);
-		
+		checkResults(groupId, exceptions);
+
 		return Integer.valueOf(groupId);
 	}
 
@@ -124,7 +123,7 @@ public class ElasticClientUtils {
 
 	public void indexDataFromCsv(String path) throws Exception {
 		List<Object> sources = readExceptionsFromCsv(path);
-    
+
 		bscOps.indexDataBulk(indexName, TYPE_NAME, sources);
 	}
 
@@ -149,15 +148,15 @@ public class ElasticClientUtils {
 		return sources;
 	}
 
-  private void checkResults(String groupId, List<TestExceptionDTO> similarFounds) throws Exception {
+	private void checkResults(String groupId, List<TestExceptionDTO> similarFounds) throws Exception {
 		QueryBuilder query = QueryBuilders.matchPhraseQuery(GROUP_ID, groupId);
-		
+
 		JestResult result = bscOps.queryData(indexName, TYPE_NAME, query, 100);
-		
+
 		List<TestExceptionDTO> exceptions = result.getSourceAsObjectList(TestExceptionDTO.class);
-		
+
 		System.out.println("Number of records: " + exceptions.size() + " found as similar: " + similarFounds.size());
-		
+
 		for (TestExceptionDTO similarFound : similarFounds) {
 			String foundId = similarFound.getGroup_id();
 			if (!foundId.equals(groupId)) {
@@ -167,7 +166,7 @@ public class ElasticClientUtils {
 		}
 		System.out.println("All group ids matched.");
 	}
-	
+
 	public String getIndexName() {
 		return indexName;
 	}
@@ -211,14 +210,18 @@ public class ElasticClientUtils {
 	public void setBscOps(BasicOperations bscOps) {
 		this.bscOps = bscOps;
 	}
-	
-	/** TODO 3. **/
+
+	/**
+	 * TODO 3.
+	 **/
 	public static Boolean deepCheckAndRepair(TestExceptionDTO excdto) {
 
 		return true;
 	}
 
-	/** TODO 4. **/
+	/**
+	 * TODO 4.
+	 **/
 	public static Boolean shallowCheckAndRepair(TestExceptionDTO excdto) {
 
 		return true;
