@@ -12,7 +12,6 @@ import fuse.qe.tools.utils.ElasticClientUtils;
 
 public final class ElasticApp {
 
-	private static final String TYPE_NAME = "error";
 	private static final String INDEX_NAME = "error_db";
 
 	private ElasticApp() {
@@ -24,7 +23,7 @@ public final class ElasticApp {
 
 			TestExceptionDTO randomRec = (TestExceptionDTO) sources.get(600);
 
-			ElasticClientUtils elasticClientUtils = new ElasticClientUtils("http://localhost:9200", "error_db");
+			ElasticClientUtils elasticClientUtils = new ElasticClientUtils("http://localhost:9200", INDEX_NAME);
 
 			//elasticClientUtils.deleteIndex();
 			//elasticClientUtils.indexData(sources);
