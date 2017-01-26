@@ -31,6 +31,8 @@ public final class ElasticApp {
 			//Thread.sleep(2000);
 
 			Integer groupId = elasticClientUtils.findGroupId(randomRec, 10, "98%");
+			
+			System.out.println("Group id: " + groupId);
 
 			//elasticClientUtils.updateElasticDB(randomRec);
 		} catch (Exception e) {

@@ -46,9 +46,9 @@ public class BasicOperations {
 		searchSourceBuilder.query(query);
 
 		final Search search = new Search.Builder(searchSourceBuilder.size(size).toString()).addIndex(indexName).addType(typeName).build();
-		System.out.println(searchSourceBuilder.toString());
+		//System.out.println(searchSourceBuilder.toString());
 		final JestResult result = jestClient.execute(search);
-		System.out.println(result.getJsonString());
+		//System.out.println(result.getJsonString());
 
 		return result;
 	}
@@ -58,18 +58,18 @@ public class BasicOperations {
 		searchSourceBuilder.query(query);
 
 		final Search search = new Search.Builder(searchSourceBuilder.toString()).addIndex(indexName).addType(typeName).build();
-		System.out.println(searchSourceBuilder.toString());
+		//System.out.println(searchSourceBuilder.toString());
 		final JestResult result = jestClient.execute(search);
-		System.out.println(result.getJsonString());
+		//System.out.println(result.getJsonString());
 
 		return result;
 	}
 
 	public JestResult queryData(String indexName, String typeName, String query) throws IOException {
 		Search search = new Search.Builder(query).addIndex(indexName).addType(typeName).build();
-		System.out.println(query);
+		//System.out.println(query);
 		JestResult result = jestClient.execute(search);
-		System.out.println(result.getJsonString());
+		//System.out.println(result.getJsonString());
 
 		return result;
 	}
