@@ -115,6 +115,10 @@ public class ElasticClientUtils {
 
 		TestExceptionDTO exception = exceptions.get(0);
 		String groupId = exception.getGroup_id();
+		
+		if (groupId == null || groupId.isEmpty()) {
+			return -1;
+		}
 
 		checkResults(groupId, exceptions);
 
