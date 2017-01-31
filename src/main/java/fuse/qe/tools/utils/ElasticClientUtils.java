@@ -166,17 +166,25 @@ public class ElasticClientUtils {
 		JestResult result = bscOps.queryData(indexName, TYPE_NAME, query, 100);
 
 		List<TestExceptionDTO> exceptions = result.getSourceAsObjectList(TestExceptionDTO.class);
-
-		System.out.print("Number of records: " + exceptions.size() + " found as similar: " + similarFounds.size());
+		
+		StringBuilder checkOutput = new StringBuilder("Number of records: ");
+		
+		checkOutput.append(exceptions.size());
+		checkOutput.append(" found as similar: ");
+		checkOutput.append(similarFounds.size()); 
 
 		for (TestExceptionDTO similarFound : similarFounds) {
 			String foundId = similarFound.getGroup_id();
 			if (!foundId.equals(groupId)) {
-				System.out.println(" Wrong id found.");
+				checkOutput.append(" Wrong id found.");
+				System.out.println(checkOutput.toString());
+
 				return false;
 			}
 		}
-		System.out.println(" All group ids matched.");
+		checkOutput.append(" All group ids matched.");
+		System.out.println(checkOutput.toString());
+
 		return true;
 	}
 	
