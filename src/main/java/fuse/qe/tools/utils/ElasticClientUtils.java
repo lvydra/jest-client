@@ -128,7 +128,11 @@ public class ElasticClientUtils {
 	public void indexData(List<Object> sources) throws Exception {
 		bscOps.indexDataBulk(indexName, TYPE_NAME, sources);
 	}
-
+	
+	public void deleteIndex() throws Exception {
+		bscOps.deleteIndex(indexName);
+	}
+	
 	public void indexDataFromCsv(String path) throws Exception {
 		List<Object> sources = readExceptionsFromCsv(path);
 
@@ -156,23 +160,43 @@ public class ElasticClientUtils {
 		return sources;
 	}
 
-	private void checkResults(String groupId, List<TestExceptionDTO> similarFounds) throws Exception {
+	private boolean checkResults(String groupId, List<TestExceptionDTO> similarFounds) throws Exception {
 		QueryBuilder query = QueryBuilders.matchPhraseQuery(GROUP_ID, groupId);
 
 		JestResult result = bscOps.queryData(indexName, TYPE_NAME, query, 100);
 
 		List<TestExceptionDTO> exceptions = result.getSourceAsObjectList(TestExceptionDTO.class);
 
-		System.out.println("Number of records: " + exceptions.size() + " found as similar: " + similarFounds.size());
+		System.out.print("Number of records: " + exceptions.size() + " found as similar: " + similarFounds.size());
 
 		for (TestExceptionDTO similarFound : similarFounds) {
 			String foundId = similarFound.getGroup_id();
 			if (!foundId.equals(groupId)) {
-				System.out.println("Wrong id found.");
-				break;
+				System.out.println(" Wrong id found.");
+				return false;
 			}
 		}
-		System.out.println("All group ids matched.");
+		System.out.println(" All group ids matched.");
+		return true;
+	}
+	
+	public void checkAgaintsClassifiedData(String path, Integer differencen, String similarity) throws Exception {
+		String testIndexName = indexName + "_test";
+
+		List<Object> sources = readExceptionsFromCsv(path);
+
+		bscOps.indexDataBulk(testIndexName, TYPE_NAME, sources);
+
+		Thread.sleep(2000);
+
+		for (Object source : sources) {
+			TestExceptionDTO record = (TestExceptionDTO) source;
+
+			Integer groupId = findGroupId(record, differencen, similarity);
+			System.out.println("For group id: " + groupId);
+		}
+
+		bscOps.deleteIndex(testIndexName);
 	}
 	
 	public Boolean checkAndRepair(TestExceptionDTO excdto) throws Exception {
@@ -230,10 +254,6 @@ public class ElasticClientUtils {
 
 	public void setFactory(JestClientFactory factory) {
 		this.factory = factory;
-	}
-
-	public void deleteIndex() throws Exception {
-		bscOps.deleteIndex(indexName);
 	}
 
 	public HttpClientConfig getClientConfig() {
