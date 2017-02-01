@@ -44,7 +44,6 @@ public class ElasticClientUtils {
 
 	private static final String ID = "id";
 	
-	
   public ElasticClientUtils(String url, Integer port, String user, String pwd, String indexName) {
 
 		this.indexName = indexName;
@@ -105,7 +104,7 @@ public class ElasticClientUtils {
 	public Integer findGroupId(TestExceptionDTO excdto, Integer difference, String minimumShouldMatch) throws Exception {
 		QueryBuilder query = QueryBuilders.matchQuery(NAME, excdto.getError_stack_trace()).slop(difference).minimumShouldMatch(minimumShouldMatch);
 
-		JestResult result = bscOps.queryData(indexName, TYPE_NAME, query, 100);
+		JestResult result = bscOps.queryData(indexName, TYPE_NAME, query);
 
 		List<TestExceptionDTO> exceptions = result.getSourceAsObjectList(TestExceptionDTO.class);
 
@@ -160,12 +159,22 @@ public class ElasticClientUtils {
 		return sources;
 	}
 
-	private boolean checkResults(String groupId, List<TestExceptionDTO> similarFounds) throws Exception {
+	private void checkResults(String groupId, List<TestExceptionDTO> similarFounds) throws Exception {
+		boolean numberMatch = true;
+		boolean consistentFind = true;
+		
 		QueryBuilder query = QueryBuilders.matchPhraseQuery(GROUP_ID, groupId);
 
-		JestResult result = bscOps.queryData(indexName, TYPE_NAME, query, 100);
+		JestResult result = bscOps.queryData(indexName, TYPE_NAME, query);
 
 		List<TestExceptionDTO> exceptions = result.getSourceAsObjectList(TestExceptionDTO.class);
+		
+		int exceptionsSize = exceptions.size();
+		int similarFoundsSize = similarFounds.size();
+		
+		if (exceptionsSize != similarFoundsSize) {
+			numberMatch = false;
+		}
 		
 		StringBuilder checkOutput = new StringBuilder("Number of records: ");
 		
@@ -177,15 +186,22 @@ public class ElasticClientUtils {
 			String foundId = similarFound.getGroup_id();
 			if (!foundId.equals(groupId)) {
 				checkOutput.append(" Wrong id found.");
-				System.out.println(checkOutput.toString());
-
-				return false;
+				consistentFind = false;
+				break;
 			}
 		}
-		checkOutput.append(" All group ids matched.");
-		System.out.println(checkOutput.toString());
-
-		return true;
+		
+		if (consistentFind) {
+			checkOutput.append(" All ids matched.");
+		}
+		
+		checkOutput.append(" For group id: " + groupId);
+		
+		if (numberMatch && consistentFind) {
+			System.out.println(checkOutput.toString());
+		} else {
+			System.err.println(checkOutput.toString());
+		}
 	}
 	
 	public void checkAgaintsClassifiedData(String path, Integer differencen, String similarity) throws Exception {
@@ -200,8 +216,7 @@ public class ElasticClientUtils {
 		for (Object source : sources) {
 			TestExceptionDTO record = (TestExceptionDTO) source;
 
-			Integer groupId = findGroupId(record, differencen, similarity);
-			System.out.println("For group id: " + groupId);
+			findGroupId(record, differencen, similarity);
 		}
 
 		bscOps.deleteIndex(testIndexName);
