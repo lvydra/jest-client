@@ -201,6 +201,7 @@ public class ElasticClientUtils {
 		checkOutput.append(exceptionGroupId);
 		checkOutput.append("|group id: ");
 		checkOutput.append(groupId);
+		checkOutput.append("|");
 		
 		if (numberMatch && consistentFind) {
 			System.out.println(checkOutput.toString());
