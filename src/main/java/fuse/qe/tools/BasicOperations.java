@@ -20,6 +20,8 @@ import io.searchbox.indices.DeleteIndex;
 public class BasicOperations {
 
 	private JestClient jestClient;
+	
+	private Integer searchSize = 1000;
 
 	public BasicOperations(JestClient jestClient) {
 		this.jestClient = jestClient;
@@ -41,11 +43,11 @@ public class BasicOperations {
 		return result;
 	}
 
-	public JestResult queryData(String indexName, String typeName, QueryBuilder query, int size) throws Exception {
+	public JestResult queryData(String indexName, String typeName, QueryBuilder query) throws Exception {
 		final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 		searchSourceBuilder.query(query);
 
-		final Search search = new Search.Builder(searchSourceBuilder.size(size).toString()).addIndex(indexName).addType(typeName).build();
+		final Search search = new Search.Builder(searchSourceBuilder.size(searchSize).toString()).addIndex(indexName).addType(typeName).build();
 		//System.out.println(searchSourceBuilder.toString());
 		final JestResult result = jestClient.execute(search);
 		//System.out.println(result.getJsonString());
@@ -53,18 +55,6 @@ public class BasicOperations {
 		return result;
 	}
 	
-	public JestResult queryData(String indexName, String typeName, QueryBuilder query) throws Exception {
-		final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-		searchSourceBuilder.query(query);
-
-		final Search search = new Search.Builder(searchSourceBuilder.toString()).addIndex(indexName).addType(typeName).build();
-		//System.out.println(searchSourceBuilder.toString());
-		final JestResult result = jestClient.execute(search);
-		//System.out.println(result.getJsonString());
-
-		return result;
-	}
-
 	public JestResult queryData(String indexName, String typeName, String query) throws IOException {
 		Search search = new Search.Builder(query).addIndex(indexName).addType(typeName).build();
 		//System.out.println(query);
@@ -110,5 +100,13 @@ public class BasicOperations {
 
 	public void setClient(JestClient jestClient) {
 		this.jestClient = jestClient;
+	}
+
+	public Integer getSearchSize() {
+		return searchSize;
+	}
+
+	public void setSearchSize(Integer searchSize) {
+		this.searchSize = searchSize;
 	}
 }
