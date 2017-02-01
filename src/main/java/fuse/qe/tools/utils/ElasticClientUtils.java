@@ -119,7 +119,7 @@ public class ElasticClientUtils {
 			return -1;
 		}
 
-		checkResults(groupId, exceptions);
+		checkResults(excdto.getId(), excdto.getGroup_id(), groupId, exceptions);
 
 		return Integer.valueOf(groupId);
 	}
@@ -159,7 +159,7 @@ public class ElasticClientUtils {
 		return sources;
 	}
 
-	private void checkResults(String groupId, List<TestExceptionDTO> similarFounds) throws Exception {
+	private void checkResults(String exceptionId, String exceptionGroupId, String groupId, List<TestExceptionDTO> similarFounds) throws Exception {
 		boolean numberMatch = true;
 		boolean consistentFind = true;
 		
@@ -195,7 +195,12 @@ public class ElasticClientUtils {
 			checkOutput.append(" All ids matched.");
 		}
 		
-		checkOutput.append(" For group id: " + groupId);
+		checkOutput.append(" For |exception id: ");
+		checkOutput.append(exceptionId);
+		checkOutput.append("|exception group id: ");
+		checkOutput.append(exceptionGroupId);
+		checkOutput.append("|group id: ");
+		checkOutput.append(groupId);
 		
 		if (numberMatch && consistentFind) {
 			System.out.println(checkOutput.toString());
