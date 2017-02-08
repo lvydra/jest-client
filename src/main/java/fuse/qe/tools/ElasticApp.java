@@ -15,7 +15,7 @@ public final class ElasticApp {
 		try {
 			ElasticClientUtils elasticClientUtils = new ElasticClientUtils("http://localhost:9200", INDEX_NAME);
 
-			elasticClientUtils.checkAgaintsClassifiedData("/home/lvydra/Stažené/error_stack_tace.csv", 5, "98%");
+			elasticClientUtils.checkAgaintsClassifiedData("/home/lvydra/Stažené/error_stack_tace.csv", 5, "99%");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
