@@ -12,10 +12,10 @@ public final class ElasticApp {
 	}
 
 	public static void main(String[] args) throws IOException {
+
 		try {
 			ElasticClientUtils elasticClientUtils = new ElasticClientUtils("http://localhost:9200", INDEX_NAME);
-
-			elasticClientUtils.checkAgaintsClassifiedData("/home/lvydra/Stažené/error_stack_tace.csv", 5, "99%");
+      elasticClientUtils.checkAgaintsClassifiedData("/home/lvydra/Stažené/error_stack_tace.csv", 5, "99%");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
