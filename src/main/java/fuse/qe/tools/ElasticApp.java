@@ -18,6 +18,7 @@ public final class ElasticApp {
 	}
 
 	public static void main(String[] args) throws IOException {
+
 		try {
 			List<Object> sources = readRecordsFromCsv("/home/lvydra/Stažené/error_stack_tace.csv");
 
@@ -31,7 +32,7 @@ public final class ElasticApp {
 			//Thread.sleep(2000);
 
 			Integer groupId = elasticClientUtils.findGroupId(randomRec, 10, "98%");
-			
+
 			System.out.println("Group id: " + groupId);
 
 			//elasticClientUtils.updateElasticDB(randomRec);

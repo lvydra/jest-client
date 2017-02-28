@@ -89,6 +89,7 @@ public class ElasticClientUtils {
 	 * @throws Exception
 	 */
 	public void updateElasticDB(TestExceptionDTO excdto) throws Exception {
+
 		bscOps.indexData(indexName, TYPE_NAME, excdto);
 	}
 
@@ -168,7 +169,7 @@ public class ElasticClientUtils {
 		for (TestExceptionDTO similarFound : similarFounds) {
 			String foundId = similarFound.getGroup_id();
 			if (!foundId.equals(groupId)) {
-				System.out.println("Wrong id found.");
+				System.out.println("Wrong goup id found.");
 				break;
 			}
 		}
