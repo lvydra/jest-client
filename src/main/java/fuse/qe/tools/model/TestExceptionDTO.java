@@ -69,6 +69,6 @@ public class TestExceptionDTO implements Serializable {
 	
 	@Override
 	public String toString() {
-		return "Record [id=" + id + ", error_stack_trace=" + error_stack_trace + ", createdOn=" + createdOn + "]";
+		return "TestExceptionDTO [id=" + id + ", error_stack_trace=" + error_stack_trace + ", group_id=" + group_id + ", createdOn=" + createdOn + "]";
 	}
 }

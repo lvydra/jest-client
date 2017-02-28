@@ -44,8 +44,9 @@ public class ElasticClientUtils {
 
 	private static final String ID = "id";
 	
-	
-  public ElasticClientUtils(String url, Integer port, String user, String pwd, String indexName) {
+	private static int reassignedGroupIds = 0;
+
+	public ElasticClientUtils(String url, Integer port, String user, String pwd, String indexName) {
 
 		this.indexName = indexName;
 
@@ -106,7 +107,7 @@ public class ElasticClientUtils {
 	public Integer findGroupId(TestExceptionDTO excdto, Integer difference, String minimumShouldMatch) throws Exception {
 		QueryBuilder query = QueryBuilders.matchQuery(NAME, excdto.getError_stack_trace()).slop(difference).minimumShouldMatch(minimumShouldMatch);
 
-		JestResult result = bscOps.queryData(indexName, TYPE_NAME, query, 100);
+		JestResult result = bscOps.queryData(indexName, TYPE_NAME, query);
 
 		List<TestExceptionDTO> exceptions = result.getSourceAsObjectList(TestExceptionDTO.class);
 
@@ -121,7 +122,30 @@ public class ElasticClientUtils {
 			return -1;
 		}
 
-		checkResults(groupId, exceptions);
+		return Integer.valueOf(groupId);
+	}
+	
+	public Integer findGroupId(TestExceptionDTO excdto, Integer difference, String minimumShouldMatch, boolean check) throws Exception {
+		QueryBuilder query = QueryBuilders.matchQuery(NAME, excdto.getError_stack_trace()).slop(difference).minimumShouldMatch(minimumShouldMatch);
+
+		JestResult result = bscOps.queryData(indexName, TYPE_NAME, query);
+
+		List<TestExceptionDTO> exceptions = result.getSourceAsObjectList(TestExceptionDTO.class);
+
+		if (exceptions.isEmpty()) {
+			return -1;
+		}
+
+		TestExceptionDTO exception = exceptions.get(0);
+		String groupId = exception.getGroup_id();
+		
+		if (groupId == null || groupId.isEmpty()) {
+			return -1;
+		}
+
+		if (check) {
+			checkResults(excdto.getId(), excdto.getGroup_id(), groupId, exceptions);
+		}
 
 		return Integer.valueOf(groupId);
 	}
@@ -129,7 +153,11 @@ public class ElasticClientUtils {
 	public void indexData(List<Object> sources) throws Exception {
 		bscOps.indexDataBulk(indexName, TYPE_NAME, sources);
 	}
-
+	
+	public void deleteIndex() throws Exception {
+		bscOps.deleteIndex(indexName);
+	}
+	
 	public void indexDataFromCsv(String path) throws Exception {
 		List<Object> sources = readExceptionsFromCsv(path);
 
@@ -157,23 +185,74 @@ public class ElasticClientUtils {
 		return sources;
 	}
 
-	private void checkResults(String groupId, List<TestExceptionDTO> similarFounds) throws Exception {
+	private void checkResults(String exceptionId, String exceptionGroupId, String groupId, List<TestExceptionDTO> similarFounds) throws Exception {
+		boolean consistentFind = true;
+		
 		QueryBuilder query = QueryBuilders.matchPhraseQuery(GROUP_ID, groupId);
 
-		JestResult result = bscOps.queryData(indexName, TYPE_NAME, query, 100);
+		JestResult result = bscOps.queryData(indexName, TYPE_NAME, query);
 
 		List<TestExceptionDTO> exceptions = result.getSourceAsObjectList(TestExceptionDTO.class);
-
-		System.out.println("Number of records: " + exceptions.size() + " found as similar: " + similarFounds.size());
+		
+		int exceptionsSize = exceptions.size();
+		int similarFoundsSize = similarFounds.size();
+		
+		StringBuilder checkOutput = new StringBuilder("Number of records: ");
+		
+		checkOutput.append(exceptionsSize);
+		checkOutput.append(" found as similar: ");
+		checkOutput.append(similarFoundsSize); 
 
 		for (TestExceptionDTO similarFound : similarFounds) {
 			String foundId = similarFound.getGroup_id();
 			if (!foundId.equals(groupId)) {
-				System.out.println("Wrong goup id found.");
+        checkOutput.append("Wrong group id found.");
+				consistentFind = false;
+
 				break;
 			}
 		}
-		System.out.println("All group ids matched.");
+		
+		if (consistentFind) {
+			checkOutput.append(" All ids matched.");
+		}
+		
+		checkOutput.append(" For |exception id: ");
+		checkOutput.append(exceptionId);
+		checkOutput.append("|exception group id: ");
+		checkOutput.append(exceptionGroupId);
+		checkOutput.append("|group id: ");
+		checkOutput.append(groupId);
+		checkOutput.append("|");
+		
+		if (exceptionGroupId.equals(groupId)) {
+			System.out.println(checkOutput.toString());
+		} else {
+			System.err.println(checkOutput.toString());
+			reassignedGroupIds++;
+		}
+	}
+	
+	public void checkAgaintsClassifiedData(String path, Integer differencen, String similarity) throws Exception {
+		reassignedGroupIds = 0;
+		
+		String testIndexName = indexName + "_test";
+
+		List<Object> sources = readExceptionsFromCsv(path);
+
+		bscOps.indexDataBulk(testIndexName, TYPE_NAME, sources);
+
+		Thread.sleep(2000);
+
+		for (Object source : sources) {
+			TestExceptionDTO record = (TestExceptionDTO) source;
+
+			findGroupId(record, differencen, similarity, true);
+		}
+
+		bscOps.deleteIndex(testIndexName);
+		
+		System.err.println(reassignedGroupIds + " exception groiup ids reasign.");
 	}
 	
 	public Boolean checkAndRepair(TestExceptionDTO excdto) throws Exception {
@@ -233,10 +312,6 @@ public class ElasticClientUtils {
 		this.factory = factory;
 	}
 
-	public void deleteIndex() throws Exception {
-		bscOps.deleteIndex(indexName);
-	}
-
 	public HttpClientConfig getClientConfig() {
 		return clientConfig;
 	}
@@ -259,5 +334,13 @@ public class ElasticClientUtils {
 
 	public void setBscOps(BasicOperations bscOps) {
 		this.bscOps = bscOps;
+	}
+	
+	 public static int getReassignedGroupIds() {
+		return reassignedGroupIds;
+	}
+
+	public static void setReassignedGroupIds(int reassignedGroupIds) {
+		ElasticClientUtils.reassignedGroupIds = reassignedGroupIds;
 	}
 }
