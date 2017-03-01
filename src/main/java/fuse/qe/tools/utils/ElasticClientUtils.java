@@ -206,7 +206,7 @@ public class ElasticClientUtils {
 		for (TestExceptionDTO similarFound : similarFounds) {
 			String foundId = similarFound.getGroup_id();
 			if (!foundId.equals(groupId)) {
-        checkOutput.append("Wrong group id found.");
+				checkOutput.append("Wrong group id found.");
 				consistentFind = false;
 
 				break;
