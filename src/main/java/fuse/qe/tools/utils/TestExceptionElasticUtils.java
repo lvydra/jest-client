@@ -1,41 +1,21 @@
 package fuse.qe.tools.utils;
 
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.impl.client.BasicCredentialsProvider;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 
 import com.opencsv.CSVReader;
 
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import fuse.qe.tools.BasicOperations;
 import fuse.qe.tools.model.TestExceptionDTO;
-import io.searchbox.client.JestClient;
-import io.searchbox.client.JestClientFactory;
 import io.searchbox.client.JestResult;
-import io.searchbox.client.config.HttpClientConfig;
 
-/**
- * Created by sveres on 1/17/17.
- */
-public class ElasticClientUtils {
-
-	private JestClientFactory factory = new JestClientFactory();
-
-	private HttpClientConfig clientConfig;
-
-	private JestClient jestClient;
-
-	private BasicOperations bscOps;
-
-	private String indexName;
-
+public class TestExceptionElasticUtils extends AbstractElasticUtils {
+	
 	private static final String TYPE_NAME = "error";
 
 	private static final String NAME = "error_stack_trace";
@@ -45,43 +25,11 @@ public class ElasticClientUtils {
 	private static final String ID = "id";
 	
 	private static int reassignedGroupIds = 0;
-
-	public ElasticClientUtils(String url, Integer port, String user, String pwd, String indexName) {
-
-		this.indexName = indexName;
-
-		BasicCredentialsProvider customCredentialsProvider = new BasicCredentialsProvider();
-		customCredentialsProvider.setCredentials(
-				new AuthScope(url, port),
-				new UsernamePasswordCredentials(user, pwd)
-		);
-
-		clientConfig = new HttpClientConfig.Builder(url)
-				.credentialsProvider(customCredentialsProvider)
-				.multiThreaded(true)
-				.build();
-
-		factory.setHttpClientConfig(clientConfig);
-
-		jestClient = factory.getObject();
-
-		bscOps = new BasicOperations(jestClient);
+	
+	public TestExceptionElasticUtils(BasicOperations bscOps, String indexName) {
+		super(bscOps, indexName, TYPE_NAME);
 	}
-
-	public ElasticClientUtils(String urlWithPort, String indexName) {
-		this.indexName = indexName;
-
-		clientConfig = new HttpClientConfig.Builder(urlWithPort)
-				.multiThreaded(true)
-				.build();
-
-		factory.setHttpClientConfig(clientConfig);
-
-		jestClient = factory.getObject();
-
-		bscOps = new BasicOperations(jestClient);
-	}
-
+	
 	/**
 	 * This method will update ES database with new exception DTO.
 	 *
@@ -90,7 +38,6 @@ public class ElasticClientUtils {
 	 * @throws Exception
 	 */
 	public void updateElasticDB(TestExceptionDTO excdto) throws Exception {
-
 		bscOps.indexData(indexName, TYPE_NAME, excdto);
 	}
 
@@ -149,16 +96,8 @@ public class ElasticClientUtils {
 
 		return Integer.valueOf(groupId);
 	}
-
-	public void indexData(List<Object> sources) throws Exception {
-		bscOps.indexDataBulk(indexName, TYPE_NAME, sources);
-	}
 	
-	public void deleteIndex() throws Exception {
-		bscOps.deleteIndex(indexName);
-	}
-	
-	public void indexDataFromCsv(String path) throws Exception {
+	public void indexExceptionDataFromCsv(String path) throws Exception {
 		List<Object> sources = readExceptionsFromCsv(path);
 
 		bscOps.indexDataBulk(indexName, TYPE_NAME, sources);
@@ -206,9 +145,8 @@ public class ElasticClientUtils {
 		for (TestExceptionDTO similarFound : similarFounds) {
 			String foundId = similarFound.getGroup_id();
 			if (!foundId.equals(groupId)) {
-				checkOutput.append("Wrong group id found.");
+				checkOutput.append(" Wrong id found.");
 				consistentFind = false;
-
 				break;
 			}
 		}
@@ -295,52 +233,12 @@ public class ElasticClientUtils {
 		  
 		return true;
 	}
-
-	public String getIndexName() {
-		return indexName;
-	}
-
-	public void setIndexName(String indexName) {
-		this.indexName = indexName;
-	}
-
-	public JestClientFactory getFactory() {
-		return factory;
-	}
-
-	public void setFactory(JestClientFactory factory) {
-		this.factory = factory;
-	}
-
-	public HttpClientConfig getClientConfig() {
-		return clientConfig;
-	}
-
-	public void setClientConfig(HttpClientConfig clientConfig) {
-		this.clientConfig = clientConfig;
-	}
-
-	public JestClient getJestClient() {
-		return jestClient;
-	}
-
-	public void setJestClient(JestClient jestClient) {
-		this.jestClient = jestClient;
-	}
-
-	public BasicOperations getBscOps() {
-		return bscOps;
-	}
-
-	public void setBscOps(BasicOperations bscOps) {
-		this.bscOps = bscOps;
-	}
 	
-	 public static int getReassignedGroupIds() {
+	public static int getReassignedGroupIds() {
 		return reassignedGroupIds;
 	}
 
 	public static void setReassignedGroupIds(int reassignedGroupIds) {
-		ElasticClientUtils.reassignedGroupIds = reassignedGroupIds;
+		TestExceptionElasticUtils.reassignedGroupIds = reassignedGroupIds;
 	}
 }
