@@ -1,19 +1,19 @@
-package fuse.qe.tools.utils;
+package fuse.qe.tools.dao;
 
 import java.io.StringReader;
 import java.util.LinkedList;
 
-import fuse.qe.tools.BasicOperations;
 import fuse.qe.tools.model.DependencyTreeDTO;
 import fuse.qe.tools.parser.Node;
 import fuse.qe.tools.parser.Parser;
+import io.searchbox.client.JestClient;
 
-public class DependencyTreeElasticUtils extends AbstractElasticUtils {
+public class DependencyTreeElasticsearchDAO extends AbstractElasticsearchDAO {
 	
 	private static final String TYPE_NAME = "leaf";
 	
-	public DependencyTreeElasticUtils(BasicOperations bscOps, String indexName) {
-		super(bscOps, indexName, TYPE_NAME);
+	public DependencyTreeElasticsearchDAO(JestClient jestClient, String indexName) {
+		super(jestClient, indexName, TYPE_NAME);
 	}
 
 	public void indexTreeData(String content) throws Exception {

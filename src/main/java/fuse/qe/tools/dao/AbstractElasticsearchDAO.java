@@ -1,10 +1,11 @@
-package fuse.qe.tools.utils;
+package fuse.qe.tools.dao;
 
 import java.util.List;
 
 import fuse.qe.tools.BasicOperations;
+import io.searchbox.client.JestClient;
 
-public abstract class AbstractElasticUtils {
+public abstract class AbstractElasticsearchDAO {
 
 	protected BasicOperations bscOps;
 
@@ -12,10 +13,11 @@ public abstract class AbstractElasticUtils {
 	
 	protected String typeName;
 
-	public AbstractElasticUtils (BasicOperations bscOps, String indexName, String typeName) {
-		this.bscOps = bscOps;
+	public AbstractElasticsearchDAO (JestClient jestClient, String indexName, String typeName) {
 		this.indexName = indexName;
 		this.typeName = typeName;
+		
+		bscOps = new BasicOperations(jestClient);
 	}
 
 	public void indexData(List<Object> sources) throws Exception {

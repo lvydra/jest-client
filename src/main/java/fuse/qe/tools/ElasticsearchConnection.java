@@ -8,7 +8,7 @@ import io.searchbox.client.JestClient;
 import io.searchbox.client.JestClientFactory;
 import io.searchbox.client.config.HttpClientConfig;
 
-public class ElasticsearchClient {
+public class ElasticsearchConnection {
 	
 	private JestClientFactory factory = new JestClientFactory();
 
@@ -16,9 +16,7 @@ public class ElasticsearchClient {
 
 	private JestClient jestClient;
 
-	private BasicOperations bscOps;
-	
-	public ElasticsearchClient(String url, Integer port, String user, String pwd) {
+	public ElasticsearchConnection(String url, Integer port, String user, String pwd) {
 		BasicCredentialsProvider customCredentialsProvider = new BasicCredentialsProvider();
 		customCredentialsProvider.setCredentials(
 				new AuthScope(url, port),
@@ -33,11 +31,9 @@ public class ElasticsearchClient {
 		factory.setHttpClientConfig(clientConfig);
 
 		jestClient = factory.getObject();
-
-		bscOps = new BasicOperations(jestClient);
 	}
 
-	public ElasticsearchClient(String urlWithPort) {
+	public ElasticsearchConnection(String urlWithPort) {
 		clientConfig = new HttpClientConfig.Builder(urlWithPort)
 				.multiThreaded(true)
 				.build();
@@ -45,8 +41,6 @@ public class ElasticsearchClient {
 		factory.setHttpClientConfig(clientConfig);
 
 		jestClient = factory.getObject();
-
-		bscOps = new BasicOperations(jestClient);
 	}
 	
 	public JestClientFactory getFactory() {
@@ -71,13 +65,5 @@ public class ElasticsearchClient {
 
 	public void setJestClient(JestClient jestClient) {
 		this.jestClient = jestClient;
-	}
-	
-	public BasicOperations getBscOps() {
-		return bscOps;
-	}
-
-	public void setBscOps(BasicOperations bscOps) {
-		this.bscOps = bscOps;
 	}
 }

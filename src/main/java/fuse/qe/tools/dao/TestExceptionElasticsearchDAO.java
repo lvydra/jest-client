@@ -1,4 +1,4 @@
-package fuse.qe.tools.utils;
+package fuse.qe.tools.dao;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -10,11 +10,11 @@ import org.elasticsearch.index.query.QueryBuilders;
 
 import com.opencsv.CSVReader;
 
-import fuse.qe.tools.BasicOperations;
 import fuse.qe.tools.model.TestExceptionDTO;
+import io.searchbox.client.JestClient;
 import io.searchbox.client.JestResult;
 
-public class TestExceptionElasticUtils extends AbstractElasticUtils {
+public class TestExceptionElasticsearchDAO extends AbstractElasticsearchDAO {
 	
 	private static final String TYPE_NAME = "error";
 
@@ -26,8 +26,8 @@ public class TestExceptionElasticUtils extends AbstractElasticUtils {
 	
 	private static int reassignedGroupIds = 0;
 	
-	public TestExceptionElasticUtils(BasicOperations bscOps, String indexName) {
-		super(bscOps, indexName, TYPE_NAME);
+	public TestExceptionElasticsearchDAO(JestClient jestClient, String indexName) {
+		super(jestClient, indexName, TYPE_NAME);
 	}
 	
 	/**
@@ -174,11 +174,11 @@ public class TestExceptionElasticUtils extends AbstractElasticUtils {
 	public void checkAgaintsClassifiedData(String path, Integer differencen, String similarity) throws Exception {
 		reassignedGroupIds = 0;
 		
-		String testIndexName = indexName + "_test";
+		//String testIndexName = indexName + "_test";
 
 		List<Object> sources = readExceptionsFromCsv(path);
 
-		bscOps.indexDataBulk(testIndexName, TYPE_NAME, sources);
+		bscOps.indexDataBulk(indexName, TYPE_NAME, sources);
 
 		Thread.sleep(2000);
 
@@ -188,9 +188,9 @@ public class TestExceptionElasticUtils extends AbstractElasticUtils {
 			findGroupId(record, differencen, similarity, true);
 		}
 
-		bscOps.deleteIndex(testIndexName);
+		bscOps.deleteIndex(indexName);
 		
-		System.err.println(reassignedGroupIds + " exception groiup ids reasign.");
+		System.err.println(reassignedGroupIds + " exception group ids reasign.");
 	}
 	
 	public Boolean checkAndRepair(TestExceptionDTO excdto) throws Exception {
@@ -239,6 +239,6 @@ public class TestExceptionElasticUtils extends AbstractElasticUtils {
 	}
 
 	public static void setReassignedGroupIds(int reassignedGroupIds) {
-		TestExceptionElasticUtils.reassignedGroupIds = reassignedGroupIds;
+		TestExceptionElasticsearchDAO.reassignedGroupIds = reassignedGroupIds;
 	}
 }
