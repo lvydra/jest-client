@@ -18,9 +18,9 @@ public class TestExceptionElasticUtils extends AbstractElasticUtils {
 	
 	private static final String TYPE_NAME = "error";
 
-	private static final String NAME = "error_stack_trace";
+	private static final String NAME = "errorStackTrace";
 
-	private static final String GROUP_ID = "group_id";
+	private static final String GROUP_ID = "groupId";
 
 	private static final String ID = "id";
 	
@@ -52,7 +52,7 @@ public class TestExceptionElasticUtils extends AbstractElasticUtils {
 	 * @throws Exception
 	 */
 	public Integer findGroupId(TestExceptionDTO excdto, Integer difference, String minimumShouldMatch) throws Exception {
-		QueryBuilder query = QueryBuilders.matchQuery(NAME, excdto.getError_stack_trace()).slop(difference).minimumShouldMatch(minimumShouldMatch);
+		QueryBuilder query = QueryBuilders.matchQuery(NAME, excdto.getErrorStackTrace()).slop(difference).minimumShouldMatch(minimumShouldMatch);
 
 		JestResult result = bscOps.queryData(indexName, TYPE_NAME, query);
 
@@ -63,7 +63,7 @@ public class TestExceptionElasticUtils extends AbstractElasticUtils {
 		}
 
 		TestExceptionDTO exception = exceptions.get(0);
-		String groupId = exception.getGroup_id();
+		String groupId = exception.getGroupId();
 		
 		if (groupId == null || groupId.isEmpty()) {
 			return -1;
@@ -73,7 +73,7 @@ public class TestExceptionElasticUtils extends AbstractElasticUtils {
 	}
 	
 	public Integer findGroupId(TestExceptionDTO excdto, Integer difference, String minimumShouldMatch, boolean check) throws Exception {
-		QueryBuilder query = QueryBuilders.matchQuery(NAME, excdto.getError_stack_trace()).slop(difference).minimumShouldMatch(minimumShouldMatch);
+		QueryBuilder query = QueryBuilders.matchQuery(NAME, excdto.getErrorStackTrace()).slop(difference).minimumShouldMatch(minimumShouldMatch);
 
 		JestResult result = bscOps.queryData(indexName, TYPE_NAME, query);
 
@@ -84,14 +84,14 @@ public class TestExceptionElasticUtils extends AbstractElasticUtils {
 		}
 
 		TestExceptionDTO exception = exceptions.get(0);
-		String groupId = exception.getGroup_id();
+		String groupId = exception.getGroupId();
 		
 		if (groupId == null || groupId.isEmpty()) {
 			return -1;
 		}
 
 		if (check) {
-			checkResults(excdto.getId(), excdto.getGroup_id(), groupId, exceptions);
+			checkResults(excdto.getId(), excdto.getGroupId(), groupId, exceptions);
 		}
 
 		return Integer.valueOf(groupId);
@@ -143,7 +143,7 @@ public class TestExceptionElasticUtils extends AbstractElasticUtils {
 		checkOutput.append(similarFoundsSize); 
 
 		for (TestExceptionDTO similarFound : similarFounds) {
-			String foundId = similarFound.getGroup_id();
+			String foundId = similarFound.getGroupId();
 			if (!foundId.equals(groupId)) {
 				checkOutput.append(" Wrong id found.");
 				consistentFind = false;
@@ -207,14 +207,14 @@ public class TestExceptionElasticUtils extends AbstractElasticUtils {
 		} else {
 			TestExceptionDTO exception = exceptions.get(0);
 			
-			String groupId = exception.getGroup_id();
-			String excdtoGroupId = excdto.getGroup_id();
+			String groupId = exception.getGroupId();
+			String excdtoGroupId = excdto.getGroupId();
 			
 			if (!groupId.equals(excdtoGroupId)) {
 				repair = true;
 			} else {
-				String statckTrace = exception.getError_stack_trace();
-				String excdtoStackTrace = excdto.getError_stack_trace();
+				String statckTrace = exception.getErrorStackTrace();
+				String excdtoStackTrace = excdto.getErrorStackTrace();
 				
 				if (!statckTrace.equals(excdtoStackTrace)) {
 					repair = true;

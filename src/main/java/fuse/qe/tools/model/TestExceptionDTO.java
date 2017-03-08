@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.Date;
 
 import io.searchbox.annotations.JestId;
+import net.sf.json.util.JSONBuilder;
+import net.sf.json.util.JSONStringer;
 
 public class TestExceptionDTO implements Serializable {
 
@@ -12,9 +14,9 @@ public class TestExceptionDTO implements Serializable {
 	@JestId
 	private String id;
 
-	private String error_stack_trace;
+	private String errorStackTrace;
 
-	private String group_id;
+	private String groupId;
 
 	private Date createdOn;
 
@@ -24,14 +26,14 @@ public class TestExceptionDTO implements Serializable {
 	
 	public TestExceptionDTO(String id, String est) {
 		this.id = id;
-		this.error_stack_trace = est;
+		this.errorStackTrace = est;
 		this.createdOn = new Date();
 	}
 
 	public TestExceptionDTO(String id, String est, String gId) {
 		this.id = id;
-		this.error_stack_trace = est;
-		this.group_id = gId;
+		this.errorStackTrace = est;
+		this.groupId = gId;
 		this.createdOn = new Date();
 	}
 
@@ -43,12 +45,12 @@ public class TestExceptionDTO implements Serializable {
 		this.id = id;
 	}
 
-	public String getError_stack_trace() {
-		return error_stack_trace;
+	public String getErrorStackTrace() {
+		return errorStackTrace;
 	}
 
-	public void setError_stack_trace(String error_stack_trace) {
-		this.error_stack_trace = error_stack_trace;
+	public void setErrorStackTrace(String error_stack_trace) {
+		this.errorStackTrace = error_stack_trace;
 	}
 
 	public Date getCreatedOn() {
@@ -59,16 +61,24 @@ public class TestExceptionDTO implements Serializable {
 		this.createdOn = createdOn;
 	}
 
-	public String getGroup_id() {
-		return group_id;
+	public String getGroupId() {
+		return groupId;
 	}
 
-	public void setGroup_id(String gid) {
-		this.group_id = gid;
+	public void setGroupId(String gid) {
+		this.groupId = gid;
 	}
 	
 	@Override
 	public String toString() {
-		return "TestExceptionDTO [id=" + id + ", error_stack_trace=" + error_stack_trace + ", group_id=" + group_id + ", createdOn=" + createdOn + "]";
+		JSONBuilder builder = new JSONStringer();
+		builder.object()
+			.key("id").value(id)
+			.key("errorStackTrace").value(errorStackTrace)
+			.key("groupId").value(groupId)
+			.key("createdOn").value(createdOn)
+		.endObject();
+				
+		return builder.toString();
 	}
 }
