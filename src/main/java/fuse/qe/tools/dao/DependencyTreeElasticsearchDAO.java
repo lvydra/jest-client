@@ -3,9 +3,9 @@ package fuse.qe.tools.dao;
 import java.io.StringReader;
 import java.util.LinkedList;
 
+import fuse.qe.tools.deptree.Parser;
+import fuse.qe.tools.deptree.Node;
 import fuse.qe.tools.model.DependencyTreeDTO;
-import fuse.qe.tools.parser.Node;
-import fuse.qe.tools.parser.Parser;
 import io.searchbox.client.JestClient;
 
 public class DependencyTreeElasticsearchDAO extends AbstractElasticsearchDAO {

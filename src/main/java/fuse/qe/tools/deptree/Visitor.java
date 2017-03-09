@@ -13,7 +13,7 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package fuse.qe.tools.parser;
+package fuse.qe.tools.deptree;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -31,7 +31,6 @@ import org.apache.commons.io.output.StringBuilderWriter;
  *
  */
 public class Visitor {
-
 
     private final StringBuilderWriter sbw;
 
