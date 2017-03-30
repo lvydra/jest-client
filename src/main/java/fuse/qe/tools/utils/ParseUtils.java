@@ -23,7 +23,7 @@ public class ParseUtils {
 
 		final String est = exc.getErrorStackTrace();
 
-		final String[] lines = this.splitString(est);
+		final String[] lines = splitString(est);
 
 		sum.add(zoz);
 
@@ -41,7 +41,7 @@ public class ParseUtils {
 			}
 		}
 
-		final ListIterator li = sum.listIterator(sum.size());
+		final ListIterator<List<String>> li = sum.listIterator(sum.size());
 
 //		Iterate in reverse.
 		final List<String> ret = new ArrayList<String>();
@@ -56,7 +56,7 @@ public class ParseUtils {
 		return ret;
 	}
 
-	private String[] splitString(String str) {
+	public static String[] splitString(String str) {
 
 		final String[] lines = str.split("\\r?\\n");
 
