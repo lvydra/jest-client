@@ -5,20 +5,46 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+
 import fuse.qe.tools.deptree.Node;
 import fuse.qe.tools.deptree.Parser;
 import fuse.qe.tools.model.DependencyTreeDTO;
 import fuse.qe.tools.utils.ParseUtils;
 import io.searchbox.client.JestClient;
+import io.searchbox.client.JestResult;
 
 public class DependencyTreeElasticsearchDAO extends AbstractElasticsearchDAO {
 	
 	private static final String TYPE_NAME = "leaf";
+	private static final String ARTIFACT_NAME = "artifact";
+	private static final String GROUP_ID_NAME = "groupId";
 	private static final String REGEX_VALID_LINE = "^\\s*[+|\\\\].*";
 	private static final String REGEX_FIRST_LINE = "^[+].*";
 	
 	public DependencyTreeElasticsearchDAO(JestClient jestClient, String indexName) {
 		super(jestClient, indexName, TYPE_NAME);
+	}
+	
+	public List<DependencyTreeDTO> getLeafsByArtifact(String artifact) throws Exception {
+		QueryBuilder query = QueryBuilders.matchQuery(ARTIFACT_NAME, artifact);
+		
+		JestResult result = bscOps.queryData(indexName, TYPE_NAME, query);
+
+		List<DependencyTreeDTO> leafs = result.getSourceAsObjectList(DependencyTreeDTO.class);
+		
+		return leafs;
+	}
+	
+	public List<DependencyTreeDTO> getLeafsByGroupId(String groupId) throws Exception {
+		QueryBuilder query = QueryBuilders.matchQuery(GROUP_ID_NAME, groupId);
+		
+		JestResult result = bscOps.queryData(indexName, TYPE_NAME, query);
+
+		List<DependencyTreeDTO> leafs = result.getSourceAsObjectList(DependencyTreeDTO.class);
+		
+		return leafs;
 	}
 
 	public void indexTreeData(String content) throws Exception {
@@ -30,7 +56,7 @@ public class DependencyTreeElasticsearchDAO extends AbstractElasticsearchDAO {
 			Node tree = parser.parse(stringReader);
 			
 			try {
-				indexLeafs("", tree, tree.getArtifactId());
+				indexLeafs("", "", tree, tree.getArtifactId());
 			} catch (Exception e) {
 				System.out.println(forrestTree);
 				System.out.println(e);
@@ -38,16 +64,17 @@ public class DependencyTreeElasticsearchDAO extends AbstractElasticsearchDAO {
 		}
 	}
 
-	private void indexLeafs(String parentPath, Node node, String rootArtifact) throws Exception {
+	private void indexLeafs(String parentPath, String parentGroupIdPath, Node node, String rootArtifact) throws Exception {
 		String path = parentPath + "/" + node.getArtifactId();
+		String groupIdPath = parentGroupIdPath + "/" + node.getGroupId();
 		
-		DependencyTreeDTO dependencyTreeDTO = new DependencyTreeDTO(path, node.getArtifactId(), rootArtifact);
+		DependencyTreeDTO dependencyTreeDTO = new DependencyTreeDTO(path, groupIdPath, node.getArtifactId(), node.getGroupId(), rootArtifact);
 		bscOps.indexData(indexName, TYPE_NAME, dependencyTreeDTO);
 		
 		LinkedList<Node> childNodes = node.getChildNodes();
 		
 		for (Node childNode : childNodes) {
-			indexLeafs(path, childNode, rootArtifact);
+			indexLeafs(path, groupIdPath, childNode, rootArtifact);
 		}
 	}
 
