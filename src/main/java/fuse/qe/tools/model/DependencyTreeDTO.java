@@ -13,16 +13,22 @@ public class DependencyTreeDTO implements Serializable {
 	private String id;
 
 	private String dependencyTree;
+	
+	private String groupIdPath;
 
 	private String artifact;
+	
+	private String groupId;
 	
 	private String rootArtifact;
 
 	private Date createdOn;
 
-	public DependencyTreeDTO(String dependencyTree, String artifact, String rootArtifact) {
+	public DependencyTreeDTO(String dependencyTree, String groupIdPath, String artifact, String groupId, String rootArtifact) {
 		this.dependencyTree = dependencyTree;
+		this.groupIdPath = groupIdPath;
 		this.artifact = artifact;
+		this.groupId = groupId;
 		this.rootArtifact = rootArtifact;
 		this.createdOn = new Date();
 	}
@@ -66,9 +72,25 @@ public class DependencyTreeDTO implements Serializable {
 	public void setCreatedOn(Date createdOn) {
 		this.createdOn = createdOn;
 	}
+	
+	public String getGroupIdPath() {
+		return groupIdPath;
+	}
+
+	public void setGroupIdPath(String groupIdPath) {
+		this.groupIdPath = groupIdPath;
+	}
+
+	public String getGroupId() {
+		return groupId;
+	}
+
+	public void setGroupId(String groupId) {
+		this.groupId = groupId;
+	}
 
 	@Override
 	public String toString() {
-		return "DependencyTreeDTO [id=" + id + ", dependencyTree=" + dependencyTree + ", artifact=" + artifact + ", rootArtifact=" + rootArtifact + ", createdOn=" + createdOn + "]";
+		return "DependencyTreeDTO [id=" + id + ", dependencyTree=" + dependencyTree + ", groupIdPath=" + groupIdPath + ", artifact=" + artifact + ", groupId=" + groupId + ", rootArtifact=" + rootArtifact + ", createdOn=" + createdOn + "]";
 	}
 }
